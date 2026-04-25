@@ -125,6 +125,13 @@ export default function Dashboard() {
             <Users className="w-5 h-5" />
             จัดการสมาชิก
           </button>
+          <Link 
+            to="/profile"
+            className="w-full flex items-center gap-3 px-4 py-3.5 text-gray-500 hover:bg-gray-50 rounded-xl transition-all font-semibold"
+          >
+            <UserCircle className="w-5 h-5" />
+            ข้อมูลส่วนตัว
+          </Link>
           <button 
             onClick={() => setActiveTab('settings')}
             className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl font-semibold transition-all ${activeTab === 'settings' ? 'bg-primary/5 text-primary' : 'text-gray-500 hover:bg-gray-50'}`}
@@ -164,7 +171,7 @@ export default function Dashboard() {
               <Bell className="w-6 h-6" />
               <span className="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full border-2 border-white"></span>
             </button>
-            <div className="flex items-center gap-3 p-1 pl-3 bg-gray-50 rounded-full hover:bg-gray-100 cursor-pointer transition-colors">
+            <Link to="/profile" className="flex items-center gap-3 p-1 pl-3 bg-gray-50 rounded-full hover:bg-gray-100 cursor-pointer transition-colors outline-none">
               <span className="text-sm font-semibold text-gray-700 hidden sm:inline">สมชาย ใจดี</span>
               <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white shadow-sm">
                 <img 
@@ -173,7 +180,7 @@ export default function Dashboard() {
                   className="w-full h-full object-cover"
                 />
               </div>
-            </div>
+            </Link>
           </div>
         </header>
 
