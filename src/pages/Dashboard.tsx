@@ -54,6 +54,7 @@ const initialMembers: Member[] = [
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [activityFilter, setActivityFilter] = useState('all');
   const [members, setMembers] = useState<Member[]>(initialMembers);
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
@@ -124,6 +125,13 @@ export default function Dashboard() {
           >
             <Users className="w-5 h-5" />
             จัดการสมาชิก
+          </button>
+          <button 
+            onClick={() => setActiveTab('activities')}
+            className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl font-semibold transition-all ${activeTab === 'activities' ? 'bg-primary/5 text-primary' : 'text-gray-500 hover:bg-gray-50'}`}
+          >
+            <Activity className="w-5 h-5" />
+            ประวัติกิจกรรม
           </button>
           <Link 
             to="/profile"
@@ -270,7 +278,10 @@ export default function Dashboard() {
                       <div>
                         <h2 className="text-xl font-bold text-gray-900">กิจกรรมล่าสุด</h2>
                       </div>
-                      <button className="text-sm font-bold text-primary flex items-center gap-1 hover:underline">
+                      <button 
+                        onClick={() => setActiveTab('activities')}
+                        className="text-sm font-bold text-primary flex items-center gap-1 hover:underline"
+                      >
                         ดูทั้งหมด
                       </button>
                     </div>
@@ -295,6 +306,89 @@ export default function Dashboard() {
                       ))}
                     </div>
                   </section>
+                </div>
+              </motion.div>
+            )}
+
+            {activeTab === 'activities' && (
+              <motion.div 
+                key="activities"
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.98 }}
+                transition={{ duration: 0.3 }}
+                className="p-6 sm:p-10 space-y-8 max-w-7xl mx-auto h-full flex flex-col"
+              >
+                <section className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+                  <div>
+                    <h1 className="text-3xl font-bold text-gray-900 tracking-tight">ประวัติกิจกรรม</h1>
+                    <p className="text-gray-500 mt-2">ตรวจสอบการทำรายการและกิจกรรมที่เกิดขึ้นในระบบทั้งหมด</p>
+                  </div>
+                  <div className="flex items-center gap-3 overflow-x-auto pb-2 sm:pb-0 no-scrollbar">
+                    {['all', 'payment', 'membership', 'system'].map((filter) => (
+                      <button 
+                        key={filter}
+                        onClick={() => setActivityFilter(filter)}
+                        className={`h-10 px-5 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${
+                          activityFilter === filter 
+                            ? 'bg-primary text-white shadow-md' 
+                            : 'bg-white text-gray-500 border border-gray-100 hover:bg-gray-50'
+                        }`}
+                      >
+                        {filter === 'all' ? 'ทั้งหมด' : 
+                         filter === 'payment' ? 'การเงิน' : 
+                         filter === 'membership' ? 'สมาชิก' : 'ระบบ'}
+                      </button>
+                    ))}
+                  </div>
+                </section>
+
+                <div className="bg-white rounded-3xl shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-gray-100 overflow-hidden flex-1 flex flex-col">
+                  <div className="p-6 border-b border-gray-50 bg-gray-50/30 flex items-center justify-between">
+                    <div className="relative w-full max-w-sm">
+                      <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <input 
+                        type="text" 
+                        placeholder="ค้นหากิจกรรม..." 
+                        className="w-full h-11 pl-11 bg-white border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                      />
+                    </div>
+                    <div className="text-sm font-bold text-gray-400 hidden sm:block">รวมทั้งหมด {activities.length} รายการ</div>
+                  </div>
+                  
+                  <div className="flex-1 overflow-y-auto divide-y divide-gray-50">
+                    {activities.map((activity) => (
+                      <div key={activity.id} className="p-6 flex items-start gap-6 hover:bg-gray-50 transition-all group">
+                        <div className={`w-12 h-12 ${activity.iconBg} ${activity.iconColor} rounded-full flex items-center justify-center shrink-0 shadow-sm border border-white`}>
+                          <activity.icon className="w-5 h-5" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                            <h3 className="font-bold text-gray-900 group-hover:text-primary transition-colors">{activity.title}</h3>
+                            <span className="text-xs font-bold text-gray-400 px-3 py-1 bg-gray-100 rounded-full">{activity.time}</span>
+                          </div>
+                          <p className="text-sm text-gray-500 mt-1">{activity.subtitle}</p>
+                          <div className="flex items-center gap-4 mt-3 text-xs font-bold uppercase tracking-widest text-gray-400">
+                            <span className="flex items-center gap-1"><UserCircle size={12} /> ID: 49201</span>
+                            <span className="flex items-center gap-1"><FileText size={12} /> Log: #LX-203</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    {/* Mock more entries to demonstrate scroll */}
+                    {[6,7,8,9,10].map(i => (
+                      <div key={i} className="p-6 flex items-start gap-6 hover:bg-gray-50 transition-all group opacity-60">
+                        <div className="w-12 h-12 bg-gray-100 text-gray-400 rounded-full flex items-center justify-center shrink-0">
+                          <Clock className="w-5 h-5" />
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="font-bold text-gray-900">กิจกรรมเก่าลำดับที่ {i}</h3>
+                          <p className="text-sm text-gray-500 mt-1">รายละเอียดกิจกรรมในอดีตเพื่อทดสอบหน้าจอ</p>
+                          <span className="text-xs font-bold text-gray-400 mt-2 block">2 วันที่แล้ว</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </motion.div>
             )}
@@ -527,6 +621,15 @@ export default function Dashboard() {
             <Users className="w-6 h-6" />
           </div>
           <span className="text-[10px] font-bold">สมาชิก</span>
+        </button>
+        <button 
+          onClick={() => setActiveTab('activities')}
+          className={`p-3 flex flex-col items-center gap-1 rounded-xl transition-colors ${activeTab === 'activities' ? 'text-primary' : 'text-gray-400'}`}
+        >
+          <div className={`${activeTab === 'activities' ? 'bg-primary/10 p-1.5 rounded-lg' : ''}`}>
+            <Activity className="w-6 h-6" />
+          </div>
+          <span className="text-[10px] font-bold">กิจกรรม</span>
         </button>
         <button 
           onClick={() => setActiveTab('settings')}
